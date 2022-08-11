@@ -12,3 +12,5 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // TODO: Route conf will be created here
+
+module.exports = app;
