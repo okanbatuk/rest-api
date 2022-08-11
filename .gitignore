@@ -6,3 +6,6 @@ temp/
 
 # ignore ALL module files
 node_modules/
+
+# ignore .env files
+.env
