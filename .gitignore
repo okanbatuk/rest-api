@@ -8,3 +8,4 @@ temp/
 node_modules/
 
 # ignore .env files
+.env
