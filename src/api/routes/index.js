@@ -1,5 +1,5 @@
 const express = require("express");
-const productRoutes = require("./product.route");
+const productRoutes = require("./product.route.js");
 const router = express.Router();
 
 //GET req => api/status
