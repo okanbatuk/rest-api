@@ -1,6 +1,11 @@
 const express = require("express"),
   httpStatus = require("http-status"),
-  { getUser, login, register } = require("../controllers/user.controller.js"),
+  {
+    getUser,
+    login,
+    register,
+    updateInfo,
+  } = require("../controllers/user.controller.js"),
   APIError = require("../errors/APIError");
 
 const router = express.Router();
@@ -55,4 +60,20 @@ router
       return res.status(httpStatus.NOT_FOUND).json(response);
     });
   });
+
+router.route("/:userId").post(async (req, res, next) => {
+  updateInfo(req).then((response) => {
+    console.log(response);
+    if (
+      response == undefined ||
+      response.length == 0 ||
+      response instanceof APIError
+    ) {
+      return res.status(httpStatus.BAD_REQUEST).json(response);
+    }
+    return res
+      .status(httpStatus.OK)
+      .json({ updatedUser: response.rows[0] });
+  });
+});
 module.exports = router;

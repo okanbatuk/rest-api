@@ -60,3 +60,21 @@ exports.login = async (req, res) => {
     return error;
   }
 };
+
+exports.updateInfo = async (req, res) => {
+  try {
+    let { userId } = req.params;
+    let text =
+      "UPDATE users SET email = $1, fullname = $2 WHERE id = $3 RETURNING *;";
+    let values = [req.body.email, req.body.fullname, userId];
+    let result = await pool.query(text, values);
+    if (result.rowCount != 0 && result != undefined) return result;
+    return new APIError({
+      message: "UserNotUpdated",
+      errors: "User Not Updated",
+      status: httpStatus.BAD_REQUEST,
+    });
+  } catch (error) {
+    return error;
+  }
+};
