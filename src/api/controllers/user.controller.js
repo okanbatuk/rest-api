@@ -39,3 +39,24 @@ exports.register = async (req, res) => {
     return error;
   }
 };
+
+exports.login = async (req, res) => {
+  try {
+    let text = "SELECT * FROM users WHERE email=$1";
+    let values = [req.body.email];
+    let { rows } = await pool.query(text, values);
+    let isLogin = await bcrypt
+      .compare(req.body.password, rows[0].password)
+      .then((result) => {
+        return result;
+      });
+    if (isLogin) return rows;
+    return new APIError({
+      message: "UserNotLoggedIn",
+      errors: "Email or password is incorrect",
+      status: httpStatus.NOT_FOUND,
+    });
+  } catch (error) {
+    return error;
+  }
+};
