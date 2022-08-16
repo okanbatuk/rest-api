@@ -8,11 +8,17 @@ const ExtendableError = require("./extendableError");
  */
 
 class APIError extends ExtendableError {
-  constructor({ message, errors, status = httpStatus.INTERNAL_SERVER_ERROR }) {
+  constructor({
+    message,
+    errors,
+    stack,
+    status = httpStatus.INTERNAL_SERVER_ERROR,
+  }) {
     super({
       message,
       errors,
       status,
+      stack,
     });
   }
 

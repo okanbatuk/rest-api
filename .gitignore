@@ -7,5 +7,11 @@ temp/
 # ignore ALL module files
 node_modules/
 
+# ignore vscode configure files
+.vscode/
+
+# ignore ALL .http files
+*.http
+
 # ignore .env files
 .env

@@ -4,11 +4,13 @@ const APIError = require("../errors/APIError");
 
 const handler = (error, req, res, next) => {
   const response = {
-    status: error.status,
-    message: error.message || httpStatus[error.status],
+    code: error.status || httpStatus[error.status],
+    message: error.message,
     errors: error.errors,
+    stack: error.stack,
   };
-  res.status(error.status);
+  let status = error.status || httpStatus.INTERNAL_SERVER_ERROR;
+  res.status(status);
   res.json(response);
 };
 
@@ -25,12 +27,14 @@ exports.converter = (error, req, res, next) => {
     convertedError = new APIError({
       message: "ValidationError",
       errors: error.errors,
-      status: error.status,
+      status: error.status || httpStatus.INTERNAL_SERVER_ERROR,
+      stack: error.stack,
     });
   } else if (!(error instanceof Error)) {
     convertedError = new APIError({
       message: error.message,
-      status: error.status,
+      status: error.status || httpStatus.INTERNAL_SERVER_ERROR,
+      stack: error.stack,
     });
   }
   return handler(convertedError, req, res, next);

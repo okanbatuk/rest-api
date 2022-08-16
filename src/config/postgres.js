@@ -1,7 +1,7 @@
-const pg = require("pg");
+const { Pool } = require("pg");
 const { db } = require("../config/vars.js");
 
-const postgresClient = new pg.Pool({
+const postgresClient = new Pool({
   connectionString: db.connectionString,
 });
 
