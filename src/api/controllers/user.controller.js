@@ -1,5 +1,7 @@
 const httpStatus = require("http-status"),
   bcrypt = require("bcrypt"),
+  jwt = require("jsonwebtoken"),
+  { ACCESS_TOKEN_SECRET_KEY } = require("../../config/vars.js"),
   pool = require("../../config/postgres"),
   APIError = require("../errors/APIError");
 
@@ -33,7 +35,6 @@ exports.register = async (req, res) => {
         status: httpStatus.INTERNAL_SERVER_ERROR,
       });
     }
-    console.log("User created", result);
     return result;
   } catch (error) {
     return error;
@@ -50,7 +51,12 @@ exports.login = async (req, res) => {
       .then((result) => {
         return result;
       });
-    if (isLogin) return rows;
+    if (isLogin) {
+      const token = jwt.sign(rows[0], ACCESS_TOKEN_SECRET_KEY, {
+        expiresIn: "2h",
+      });
+      return { accessToken: token };
+    }
     return new APIError({
       message: "UserNotLoggedIn",
       errors: "Email or password is incorrect",

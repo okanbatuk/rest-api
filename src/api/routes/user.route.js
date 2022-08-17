@@ -52,8 +52,8 @@ router
   })
   .post(async (req, res, next) => {
     login(req).then((response) => {
-      if (response.length > 0) {
-        return res.status(httpStatus.OK).json(response.rows[0]);
+      if (response) {
+        return res.status(httpStatus.OK).json(response);
       }
       return res.status(httpStatus.NOT_FOUND).json(response);
     });
