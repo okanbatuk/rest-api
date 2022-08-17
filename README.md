@@ -26,11 +26,13 @@ POST http://localhost:3000/api/users/register HTTP/1.1
 GET http://localhost:3000/api/users/login
 
 POST http://localhost:3000/api/users/login HTTP/1.1
-    content-type: application/json
-    {
-      "email": "",
-      "password": ""
-    }
+content-type: application/json
+```
+{
+  "email": "",
+  "password": ""
+}
+```
 
 POST http://localhost:3000/api/users/36 HTTP/1.1
     content-type: application/json
