@@ -22,22 +22,30 @@ exports.getUser = async (req, res) => {
 };
 
 exports.register = async (req, res) => {
-  try {
-    let cryptedPassword = await bcrypt.hash(req.body.password, 10);
-    let text =
-      "INSERT INTO users (email, password, fullname) VALUES ($1,$2,$3) RETURNING *;";
-    let values = [req.body.email, cryptedPassword, req.body.fullname];
-    let result = await pool.query(text, values);
-    if (result.rowCount == 0 || !result) {
-      return new APIError({
-        message: "UserNotCreated",
-        errors: "User not created",
-        status: httpStatus.INTERNAL_SERVER_ERROR,
-      });
+  if (!req.body.email || !req.body.password || !req.body.fullname) {
+    return new APIError({
+      message: "InvalidParams",
+      errors: "Email and password and fullname must be provided",
+      status: httpStatus.BAD_REQUEST,
+    });
+  } else {
+    try {
+      let cryptedPassword = await bcrypt.hash(req.body.password, 10);
+      let text =
+        "INSERT INTO users (email, password, fullname) VALUES ($1,$2,$3) RETURNING *;";
+      let values = [req.body.email, cryptedPassword, req.body.fullname];
+      let result = await pool.query(text, values);
+      if (result.rowCount == 0 || !result) {
+        return new APIError({
+          message: "UserNotCreated",
+          errors: "User not created",
+          status: httpStatus.INTERNAL_SERVER_ERROR,
+        });
+      }
+      return result;
+    } catch (error) {
+      return error;
     }
-    return result;
-  } catch (error) {
-    return error;
   }
 };
 
@@ -68,20 +76,28 @@ exports.login = async (req, res) => {
 };
 
 exports.updateInfo = async (req, res) => {
-  try {
-    let { userId } = req.params;
-    let text =
-      "UPDATE users SET email = $1, fullname = $2 WHERE id = $3 RETURNING *;";
-    let values = [req.body.email, req.body.fullname, userId];
-    let result = await pool.query(text, values);
-    if (result != undefined && result.rowCount != 0) return result;
+  if (!req.params || !req.body.email || !req.body.fullname) {
     return new APIError({
-      message: "UserNotUpdated",
-      errors: "User Not Updated",
+      message: "InvalidParams",
+      errors: "Email and fullname must be provided",
       status: httpStatus.BAD_REQUEST,
     });
-  } catch (error) {
-    return error;
+  } else {
+    try {
+      let { userId } = req.params;
+      let text =
+        "UPDATE users SET email = $1, fullname = $2 WHERE id = $3 RETURNING *;";
+      let values = [req.body.email, req.body.fullname, userId];
+      let result = await pool.query(text, values);
+      if (result != undefined && result.rowCount != 0) return result;
+      return new APIError({
+        message: "UserNotUpdated",
+        errors: "User Not Updated",
+        status: httpStatus.BAD_REQUEST,
+      });
+    } catch (error) {
+      return error;
+    }
   }
 };
 
