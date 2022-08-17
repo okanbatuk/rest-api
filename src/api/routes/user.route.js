@@ -5,6 +5,7 @@ const express = require("express"),
     login,
     register,
     updateInfo,
+    deleteUser,
   } = require("../controllers/user.controller.js"),
   APIError = require("../errors/APIError");
 
@@ -30,16 +31,14 @@ router
   .post(async (req, res, next) => {
     try {
       register(req).then((response) => {
-        console.log(response);
         if (
           response instanceof APIError ||
           response == undefined ||
           response.severity == "ERROR"
         ) {
           return res.status(httpStatus.INTERNAL_SERVER_ERROR).json(response);
-        } else {
-          return res.status(201).json(response);
         }
+        return res.status(201).json(response);
       });
     } catch (error) {
       return next(error);
@@ -53,9 +52,8 @@ router
   })
   .post(async (req, res, next) => {
     login(req).then((response) => {
-      console.log(response);
       if (response.length > 0) {
-        return res.status(httpStatus.OK).json(response);
+        return res.status(httpStatus.OK).json(response.rows[0]);
       }
       return res.status(httpStatus.NOT_FOUND).json(response);
     });
@@ -63,7 +61,6 @@ router
 
 router.route("/:userId").post(async (req, res, next) => {
   updateInfo(req).then((response) => {
-    console.log(response);
     if (
       response == undefined ||
       response.length == 0 ||
@@ -71,9 +68,20 @@ router.route("/:userId").post(async (req, res, next) => {
     ) {
       return res.status(httpStatus.BAD_REQUEST).json(response);
     }
-    return res
-      .status(httpStatus.OK)
-      .json({ updatedUser: response.rows[0] });
+    return res.status(httpStatus.OK).json({ updatedUser: response.rows[0] });
+  });
+});
+
+router.route("/:userId").delete(async (req, res, next) => {
+  deleteUser(req).then((response) => {
+    if (
+      response != undefined &&
+      !(response instanceof APIError) &&
+      response.rows.length > 0
+    ) {
+      return res.status(httpStatus.OK).json({ deletedUser: response.rows[0] });
+    }
+    return res.status(httpStatus.BAD_REQUEST).json(response);
   });
 });
 module.exports = router;

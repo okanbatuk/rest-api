@@ -5,7 +5,7 @@ const httpStatus = require("http-status"),
 
 exports.getUser = async (req, res) => {
   try {
-    let result = await pool.query("Select * from users");
+    let result = await pool.query("Select * from vw_users;");
     if (result.rowCount == 0) {
       return new APIError({
         message: "UserNotFound",
@@ -68,12 +68,37 @@ exports.updateInfo = async (req, res) => {
       "UPDATE users SET email = $1, fullname = $2 WHERE id = $3 RETURNING *;";
     let values = [req.body.email, req.body.fullname, userId];
     let result = await pool.query(text, values);
-    if (result.rowCount != 0 && result != undefined) return result;
+    if (result != undefined && result.rowCount != 0) return result;
     return new APIError({
       message: "UserNotUpdated",
       errors: "User Not Updated",
       status: httpStatus.BAD_REQUEST,
     });
+  } catch (error) {
+    return error;
+  }
+};
+
+exports.deleteUser = async (req, res) => {
+  try {
+    let { userId } = req.params;
+    let text = "Update users set isActive=false where id = $1 returning *;";
+    let values = [userId];
+
+    let result = await pool.query(text, values);
+    if (result != undefined && result.rowCount != 0) return result;
+    return new APIError({
+      message: "UserNotDeleted",
+      errors: "User Not Deleted",
+      status: httpStatus.status.BAD_REQUEST,
+    });
+  } catch (error) {
+    return error;
+  }
+};
+
+exports.changePassword = async (req, res) => {
+  try {
   } catch (error) {
     return error;
   }
