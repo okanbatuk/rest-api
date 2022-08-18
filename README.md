@@ -2,7 +2,7 @@
 
 
 This project is Rest-API Tutorial.
-I gonna use Node.js and PostgreSQL in this project.
+I'm gonna use Node.js and PostgreSQL in this project.
 
 
 
