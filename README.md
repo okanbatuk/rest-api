@@ -11,7 +11,7 @@ I'm gonna use Node.js and PostgreSQL in this project.
 GET http://localhost:3000/api/users
 
 GET http://localhost:3000/api/products HTTP/1.1
-> #Authorization: Bearer JsonWebToken
+> #Authorization: Bearer `JsonWebToken`
 
 GET http://localhost:3000/api/users/register
 
